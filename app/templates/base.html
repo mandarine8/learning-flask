@@ -7,11 +7,13 @@
     {% endif %}
   </head>
   <body>
+    <!-- Navbar -->
     <div>
       My page:
       <a href="{{ url_for('index') }}">Home</a>
       <a href="{{ url_for('login') }}">Login</a>
     </div>
+      <!-- Flashes -->
       <hr>
       {% with messages = get_flashed_messages() %}
       {% if messages %}
