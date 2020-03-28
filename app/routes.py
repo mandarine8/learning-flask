@@ -4,6 +4,8 @@ from app.forms import LoginForm
 from flask_login import login_required
 from flask import request
 from werkzeug.urls import url_parse
+from app import db
+from app.forms import RegistrationForm
 
 @app.route('/')
 @app.route('/index')
@@ -20,7 +22,7 @@ def index():
       'body': 'The Harry Potter movie was so cool!'
     }
   ]
-  return render_template('index.html', title='Home', user=user, posts=posts)
+  return render_template('index.html', title='Home', posts=posts)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -37,3 +39,16 @@ def login():
     return redirect(next_page)
   return render_template('login.html', title='Sign In', form=form)
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+  if current_user.is_authenticated:
+    return redirect(url_for('index'))
+  form = RegistrationForm()
+  if form.validate_on_submit():
+    user = User(username=form.username.data, email=form.email.data)
+    user.set_password(form.password.data)
+    db.session.add(user)
+    db.session.commit()
+    flash('Congratulations, you are now a registered user!')
+    return redirect(url_for('login'))
+  return render_template('register.html', title='Register', form=form)
